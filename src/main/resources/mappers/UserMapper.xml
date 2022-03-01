@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="tm.booup.tellme.repository.UserRepository">
+
+  <insert id="insertUser" parameterType="TMUserEntity">
+    INSERT USER
+    ( ID
+    , NAME
+    , EMAIL
+    , PASSWORD
+    ) VALUES
+    ( replace(uuid(),'-','')
+    , #{name}
+    , #{email}
+    , #{password}
+    )
+  </insert>
+
+  <select id="findByEmail" parameterType="TMUserEntity" resultType="TMUserEntity">
+    SELECT
+    ID
+    ,NAME
+    ,EMAIL
+    ,STATUS
+    ,PASSWORD
+    FROM TM_USER
+    WHERE EMAIL = #{email}
+  </select>
+
+</mapper>
