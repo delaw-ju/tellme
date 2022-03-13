@@ -18,6 +18,7 @@ import tm.booup.tellme.repository.UserRepository;
 
 @Service
 @Slf4j
+//TODO: JWT 적용
 public class UserService {
 
   @Autowired

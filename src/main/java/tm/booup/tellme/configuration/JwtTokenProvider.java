@@ -20,6 +20,7 @@ import tm.booup.tellme.service.UserService;
 @Component
 @RequiredArgsConstructor
 @Slf4j
+//TODO : Security filter 적용
 public class JwtTokenProvider {
 
   private static final String ISSUER = "TELL_ME";
