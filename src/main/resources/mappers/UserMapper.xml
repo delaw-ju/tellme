@@ -4,21 +4,21 @@
 
 <mapper namespace="tm.booup.tellme.repository.UserRepository">
 
-  <insert id="insertUser" parameterType="TMUserEntity">
-    INSERT USER
-    ( ID
-    , NAME
+  <insert id="insertUser" keyProperty="id" parameterType="TMUserEntity" useGeneratedKeys="true">
+    INSERT TM_USER
+    ( NAME
     , EMAIL
     , PASSWORD
+    , AUTH_PIN
     ) VALUES
-    ( replace(uuid(),'-','')
-    , #{name}
+    ( #{name}
     , #{email}
     , #{password}
+    , #{authPin}
     )
   </insert>
 
-  <select id="findByEmail" parameterType="TMUserEntity" resultType="TMUserEntity">
+  <select id="findByEmail" parameterType="String" resultType="TMUserEntity">
     SELECT
     ID
     ,NAME
@@ -28,5 +28,12 @@
     FROM TM_USER
     WHERE EMAIL = #{email}
   </select>
+
+  <update id="updateUserStatus" parameterType="TMUserEntity">
+    UPDATE TM_USER SET
+    STATUS = 'A'
+    WHERE ID = #{id}
+    AND AUTH_PIN = #{authPin}
+  </update>
 
 </mapper>

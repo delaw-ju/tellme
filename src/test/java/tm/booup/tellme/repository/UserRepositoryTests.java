@@ -17,11 +17,12 @@ public class UserRepositoryTests {
   @BeforeEach
   public void before() {
     user = new TMUserEntity();
+    user.setEmail("deloaw.ju@gmail.com");
   }
 
   @Test
   public void findById() {
-    TMUserEntity result = userRepository.findById(user);
+    TMUserEntity result = userRepository.findByEmail(user.getEmail());
     assert result != null;
   }
 }

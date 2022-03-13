@@ -8,7 +8,7 @@ import tm.booup.tellme.domain.entity.TMUserEntity;
 @NoArgsConstructor
 public class TMUserDTO {
 
-  private String id;
+  private int id;
   private String email;
   private String name;
   private String password;
@@ -17,6 +17,7 @@ public class TMUserDTO {
   private String insUser;
   private String updDate;
   private String updUser;
+  private String authorities;
 
   public TMUserDTO(TMUserEntity userEntity) {
     this.id = userEntity.getId();
@@ -24,5 +25,6 @@ public class TMUserDTO {
     this.email = userEntity.getEmail();
     this.password = userEntity.getPassword();
     this.status = userEntity.getStatus();
+    this.authorities = userEntity.getAuthorities();
   }
 }

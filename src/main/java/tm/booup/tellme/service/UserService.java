@@ -1,11 +1,16 @@
 package tm.booup.tellme.service;
 
+import java.io.UnsupportedEncodingException;
+import java.util.UUID;
+import javax.mail.MessagingException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 import tm.booup.tellme.defin.AccountStatus;
-import tm.booup.tellme.defin.LoginResult;
+import tm.booup.tellme.defin.Result;
 import tm.booup.tellme.domain.dto.TMUserDTO;
 import tm.booup.tellme.domain.entity.TMUserEntity;
 import tm.booup.tellme.exception.LoginException;
@@ -21,27 +26,57 @@ public class UserService {
   @Autowired
   private PasswordEncoder passwordEncoder;
 
-  public TMUserDTO Login(TMUserDTO userDTO) throws LoginException {
+  @Autowired
+  private MailService mailService;
+
+  public TMUserDTO login(TMUserDTO userDTO) throws LoginException {
     TMUserEntity userEntity = new TMUserEntity(userDTO);
-    TMUserEntity responseUserEntity = userRepository.findById(userEntity);
+    TMUserEntity responseUserEntity = userRepository.findByEmail(userEntity.getEmail());
 
     boolean isWrongPassword = this.isWrongPassword(userDTO.getPassword(),
         responseUserEntity.getPassword());
     if (isWrongPassword) {
-      throw new LoginException(LoginResult.LoginFail.getMessage());
+      throw new LoginException(Result.Login.LoginFail.getMessage());
     }
 
     boolean isActiveAccount = isNotActiveAccount(responseUserEntity.getStatus());
     if (isActiveAccount) {
-      throw new LoginException(LoginResult.NonActiveAccount.getMessage());
+      throw new LoginException(Result.Login.NonActiveAccount.getMessage());
     }
 
     return new TMUserDTO(responseUserEntity);
   }
 
-  public void joinIn(TMUserDTO userDTO) {
+  @Transactional(isolation = Isolation.READ_COMMITTED)
+  public void signup(TMUserDTO userDTO)
+      throws MessagingException, UnsupportedEncodingException, LoginException {
     TMUserEntity userEntity = new TMUserEntity(userDTO);
+    String pin = UUID.randomUUID().toString();
+    userEntity.setAuthPin(pin);
+    userEntity.setPassword(passwordEncoder.encode(userEntity.getPassword()));
     int result = userRepository.insertUser(userEntity);
+    this.judgementDataWrite(1, result, Result.Login.SignUpError.getMessage());
+    mailService.mailSend(pin, userEntity.getId(), userEntity.getEmail());
+  }
+
+  public void activeAccount(String pin, int id) throws LoginException {
+    TMUserEntity userEntity = new TMUserEntity();
+    userEntity.setAuthPin(pin);
+    userEntity.setId(id);
+    int result = userRepository.updateUserStatus(userEntity);
+    this.judgementDataWrite(1, result, Result.Login.ActiveError.getMessage());
+  }
+
+  public TMUserDTO findById(String userId) {
+    TMUserEntity responseUserEntity = userRepository.findById(userId);
+    return new TMUserDTO(responseUserEntity);
+  }
+
+  private void judgementDataWrite(int expectResult, int actualResult, String message)
+      throws LoginException {
+    if (expectResult != actualResult) {
+      throw new LoginException(message);
+    }
   }
 
   private boolean isWrongPassword(String rawPassword, String encodedPassword) {
@@ -49,6 +84,6 @@ public class UserService {
   }
 
   private boolean isNotActiveAccount(String status) {
-    return AccountStatus.Wait.getCode().equals(status);
+    return !AccountStatus.Normal.getCode().equals(status);
   }
 }

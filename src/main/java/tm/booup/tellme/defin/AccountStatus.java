@@ -2,7 +2,7 @@ package tm.booup.tellme.defin;
 
 public enum AccountStatus {
   Wait("대기중", "W"),
-  Normal("정상", "N"),
+  Normal("정상", "A"),
   Delete("삭제", "D");
 
   String statusString;

@@ -13,4 +13,12 @@ public class EncryptTests {
     assert passwordEncoder.matches(password, encodedPassword);
   }
 
+  @Test
+  public void secretKeyTest() {
+    String password = "TELLME_DEV";
+    BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    String encodedPassword = passwordEncoder.encode(password);
+    System.out.println(encodedPassword);
+    assert passwordEncoder.matches(password, encodedPassword);
+  }
 }

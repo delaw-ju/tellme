@@ -6,8 +6,11 @@ import tm.booup.tellme.domain.entity.TMUserEntity;
 @Mapper
 public interface UserRepository {
 
-  TMUserEntity findById(TMUserEntity userEntity);
+  TMUserEntity findByEmail(String email);
+
+  TMUserEntity findById(String userId);
 
   int insertUser(TMUserEntity userEntity);
 
+  int updateUserStatus(TMUserEntity userEntity);
 }
