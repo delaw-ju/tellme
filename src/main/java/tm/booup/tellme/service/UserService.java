@@ -57,7 +57,7 @@ public class UserService {
     userEntity.setPassword(passwordEncoder.encode(userEntity.getPassword()));
     int result = userRepository.insertUser(userEntity);
     this.judgementDataWrite(1, result, Result.Login.SignUpError.getMessage());
-    mailService.mailSend(pin, userEntity.getId(), userEntity.getEmail());
+    //mailService.mailSend(pin, userEntity.getId(), userEntity.getEmail());
   }
 
   public void activeAccount(String pin, int id) throws LoginException {
@@ -66,6 +66,13 @@ public class UserService {
     userEntity.setId(id);
     int result = userRepository.updateUserStatus(userEntity);
     this.judgementDataWrite(1, result, Result.Login.ActiveError.getMessage());
+  }
+
+  public void deleteAccount(String email) throws Exception {
+    int result = userRepository.deleteUser(email);
+    if (result <= 0) {
+      throw new Exception();
+    }
   }
 
   public TMUserDTO findById(String userId) {

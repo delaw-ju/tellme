@@ -13,4 +13,6 @@ public interface UserRepository {
   int insertUser(TMUserEntity userEntity);
 
   int updateUserStatus(TMUserEntity userEntity);
+
+  int deleteUser(String email);
 }

@@ -4,6 +4,10 @@
 
 <mapper namespace="tm.booup.tellme.repository.UserRepository">
 
+  <delete id="deleteUser" parameterType="String">
+    DELETE FROM TM_USER WHERE EMAIL = #{email}
+  </delete>
+
   <insert id="insertUser" keyProperty="id" parameterType="TMUserEntity" useGeneratedKeys="true">
     INSERT TM_USER
     ( NAME
